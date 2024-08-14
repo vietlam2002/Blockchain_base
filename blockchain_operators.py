@@ -21,7 +21,7 @@ class Blockchain:
         self.unconfirmed_transactions = []  # Khi xuất hiện transaction mới chưa được confirm
         self.create_genesis_block()
 
-        self.difficulty = 3
+        self.difficulty = 5
 
     def create_genesis_block(self):
         genesis_block = Block(0,  [], time.time(), '0')
@@ -33,9 +33,16 @@ class Blockchain:
         if block.previous_hash != previous_hash:  # add in the last of blockchain
             return False
 
+        if not self.is_valid_proof(block, proof):
+            return False
+
+        block.hash = proof['Hash']
         self.chain.append(block)
         # return self.last_block().index + 1
         return self.last_block.index + 1
+
+    def is_valid_proof(self, block, proof):
+        return proof['Hash'].startswith('0' * self.difficulty) and proof['Hash'] == block.compute_hash()
 
     def new_transaction(self, transaction):
         self.unconfirmed_transactions.append(transaction)
@@ -60,7 +67,12 @@ class Blockchain:
             block.nonce += 1
             computed_hash = block.compute_hash()
 
-        return 'Nonce: {} - Hash: {}'.format(block.nonce, computed_hash)
+        PoW = {
+            'Nonce': block.nonce,
+            'Hash' : computed_hash
+        }
+        return PoW
+
 
     # Mỗi lần gọi phương thức cần dấu ngoặc, @property sẽ giúp gọi ko cần dấu ngoặc
     @property
