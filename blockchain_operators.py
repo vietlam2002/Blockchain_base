@@ -4,27 +4,29 @@ import json
 
 
 class Block:
-    def __init__(self, index, transactions, timestamp, previous_hash):
+    def __init__(self, index, transactions, timestamp, previous_hash, nonce=0):
         self.index = index
         self.transactions = transactions
         self.timestamp = timestamp
         self.previous_hash = previous_hash
-        self.nonce = 0
+        self.nonce = nonce
 
     def compute_hash(self):
         return sha256(json.dumps(self.__dict__).encode()).hexdigest()
 
 
 class Blockchain:
+    difficulty = 5
+
     def __init__(self):
         self.chain = []
         self.unconfirmed_transactions = []  # Khi xuất hiện transaction mới chưa được confirm
-        self.create_genesis_block()
+        # self.create_genesis_block()
 
-        self.difficulty = 5
+        
 
     def create_genesis_block(self):
-        genesis_block = Block(0,  [], time.time(), '0')
+        genesis_block = Block(0,  [], 0, '0')
         genesis_block.hash = genesis_block.compute_hash()
         self.chain.append(genesis_block)
     
@@ -41,8 +43,10 @@ class Blockchain:
         # return self.last_block().index + 1
         return self.last_block.index + 1
 
-    def is_valid_proof(self, block, proof):
-        return proof['Hash'].startswith('0' * self.difficulty) and proof['Hash'] == block.compute_hash()
+
+    @classmethod  #phương thức dùng riêng cho class blockchain, sử dụng cls thay vì self
+    def is_valid_proof(cls, block, proof):
+        return proof['Hash'].startswith('0' * Blockchain.difficulty) and proof['Hash'] == block.compute_hash()
 
     def new_transaction(self, transaction):
         self.unconfirmed_transactions.append(transaction)
@@ -62,6 +66,7 @@ class Blockchain:
         return result
 
     def proof_of_work(self, block):
+        
         computed_hash = block.compute_hash()
         while not computed_hash.startswith('0' * self.difficulty):
             block.nonce += 1

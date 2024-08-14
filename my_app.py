@@ -6,6 +6,7 @@ from blockchain_operators import Block, Blockchain
 app = Flask(__name__)
 
 blockchain = Blockchain()
+blockchain.create_genesis_block()
 
 
 @app.route('/', methods=['GET'])
