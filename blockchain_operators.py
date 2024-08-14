@@ -56,10 +56,10 @@ class Blockchain:
                           transactions=self.unconfirmed_transactions,
                           timestamp=time.time(),
                           previous_hash=self.last_block.hash)
-
+  
         PoW = self.proof_of_work(new_block)
-        self.add_block(new_block, PoW)
-        return PoW
+        result = self.add_block(new_block, PoW)
+        return result
 
     def proof_of_work(self, block):
         computed_hash = block.compute_hash()
