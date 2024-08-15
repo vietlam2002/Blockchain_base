@@ -103,6 +103,12 @@ def create_chain_from_chaindump(chain_dump):
         
     return generated_blockchain
 
+def get_consensus():
+    global blockchain
+
+    longest_chain = None
+    current_chain = len(blockchain.chain)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
