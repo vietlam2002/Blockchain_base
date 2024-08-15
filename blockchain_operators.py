@@ -35,10 +35,10 @@ class Blockchain:
         if block.previous_hash != previous_hash:  # add in the last of blockchain
             return False
 
-        if not self.is_valid_proof(block, proof):
+        if not Blockchain.is_valid_proof(block, proof):
             return False
 
-        block.hash = proof['Hash']
+        block.hash = proof
         self.chain.append(block)
         # return self.last_block().index + 1
         return self.last_block.index + 1
@@ -46,7 +46,7 @@ class Blockchain:
 
     @classmethod  #phương thức dùng riêng cho class blockchain, sử dụng cls thay vì self
     def is_valid_proof(cls, block, proof):
-        return proof['Hash'].startswith('0' * Blockchain.difficulty) and proof['Hash'] == block.compute_hash()
+        return proof.startswith('0' * Blockchain.difficulty) and proof == block.compute_hash()
 
     def new_transaction(self, transaction):
         self.unconfirmed_transactions.append(transaction)
@@ -62,20 +62,19 @@ class Blockchain:
                           previous_hash=self.last_block.hash)
   
         PoW = self.proof_of_work(new_block)
+        
         result = self.add_block(new_block, PoW)
+        self.unconfirmed_transactions = []
         return result
 
     def proof_of_work(self, block):
-        
+        block.nonce = 0
         computed_hash = block.compute_hash()
-        while not computed_hash.startswith('0' * self.difficulty):
+        while not computed_hash.startswith('0' * Blockchain.difficulty):
             block.nonce += 1
             computed_hash = block.compute_hash()
 
-        PoW = {
-            'Nonce': block.nonce,
-            'Hash' : computed_hash
-        }
+        PoW = computed_hash
         return PoW
 
 
