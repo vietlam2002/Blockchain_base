@@ -12,7 +12,7 @@ class Block:
         self.nonce = nonce
 
     def compute_hash(self):
-        return sha256(json.dumps(self.__dict__).encode()).hexdigest()
+        return sha256(json.dumps(self.__dict__, sort_keys=True).encode()).hexdigest()
 
 
 class Blockchain:
@@ -31,6 +31,7 @@ class Blockchain:
         self.chain.append(genesis_block)
     
     def add_block(self, block, proof):
+        print("OK")
         previous_hash = self.last_block.hash
         if block.previous_hash != previous_hash:  # add in the last of blockchain
             return False

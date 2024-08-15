@@ -57,7 +57,7 @@ def register_new_node():
         return "Invalid data", 400
     
     peers.add(node_address)
-    return get_chain
+    return get_chain()
 
 @app.route('/register_node_with', methods=['POST'])
 def register_node_with():
@@ -72,16 +72,36 @@ def register_node_with():
                              data=json.dumps(data), headers=headers)
 
     if response.status_code == 200:
-        
+        global blockchain
+        global peers          #global to change global var ( peers, blockchain,..)
+
         chain_dump = response.json()["chain"]
         blockchain = create_chain_from_chaindump(chain_dump)
-        print('OK, see yah')
+        peers.update(response.json()["peers"])
+        return "Resistration successful.", 200
+    else:
+        return response.content, response.status_code
 
 
-def create_chain_from_chaindump(chain_to_create):
-    pass
-
-
+def create_chain_from_chaindump(chain_dump):
+    generated_blockchain = Blockchain()
+    generated_blockchain.create_genesis_block()
+    for idx, bl in enumerate(chain_dump):
+        if idx == 0:
+            continue
+        block = Block(
+            index=bl["index"],
+            transactions=bl["transactions"],
+            timestamp=bl["timestamp"],
+            previous_hash=bl["previous_hash"],
+            nonce=bl["nonce"]
+        )
+        proof = bl["hash"]
+        added = generated_blockchain.add_block(block, proof)
+        if not added:
+            raise Exception("the chain dump is tampered !") 
+        
+    return generated_blockchain
 
 
 if __name__ == '__main__':

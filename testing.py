@@ -15,13 +15,24 @@ data2 = {
 # #
 # # print(block.__dict__)  # print(vars(block))
 #
-blockchain = Blockchain()
-blockchain.new_transaction(data2)
-print(blockchain.mine())
-
-print(blockchain.chain[-1].__dict__)
 
 
 
-dict = blockchain.__dict__
-print(dict['chain'][0].__dict__)
+
+# blockchain = Blockchain()
+# blockchain.new_transaction(data2)
+# print(blockchain.mine())
+
+# print(blockchain.chain[-1].__dict__)
+
+
+
+# dict = blockchain.__dict__
+# print(dict['chain'][0].__dict__)
+
+
+
+list = ['a', 'b', 'c', 'd']
+
+for idx, giatri in enumerate(list):
+    print('phan tu o vi tri {} co gia tri la {}'.format(idx, giatri))
